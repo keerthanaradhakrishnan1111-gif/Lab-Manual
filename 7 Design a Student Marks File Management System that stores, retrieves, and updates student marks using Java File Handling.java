@@ -1,84 +1,69 @@
 import java.io.*;
-import java.util.Scanner;
+import java.util.*;
 
-public class StudentFile {
-    public static void main(String[] args) {
+public class Main {
+    public static void main(String[] args) throws Exception {
+
         Scanner sc = new Scanner(System.in);
-        String[] rollNo = new String[3];
-        String[] name = new String[3];
-        int[] marks = new int[3];
+        FileWriter fw = new FileWriter("student.txt");
 
-        String filePath = "/tmp/students.txt";
+        System.out.println("Enter Details of 3 Students\n");
 
-        System.out.println("Enter Details of 3 Students");
+        for (int i = 1; i <= 3; i++) {
+            System.out.println("Student " + i);
 
-        // Writing student details to file
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filePath))) {
+            System.out.print("Roll No: ");
+            int roll = sc.nextInt();
+            sc.nextLine();
 
-            for (int i = 0; i < 3; i++) {
-                System.out.println("\nStudent " + (i + 1));
+            System.out.print("Name: ");
+            String name = sc.nextLine();
 
-                System.out.print("Roll No : ");
-                rollNo[i] = sc.nextLine();
+            System.out.print("Marks: ");
+            int marks = sc.nextInt();
+            sc.nextLine();
 
-                System.out.print("Name : ");
-                name[i] = sc.nextLine();
-
-                System.out.print("Marks : ");
-                marks[i] = Integer.parseInt(sc.nextLine());
-
-                bw.write(rollNo[i] + "," + name[i] + "," + marks[i]);
-                bw.newLine();
-            }
-
-            System.out.println("\nStudent records saved successfully.");
-
-        } catch (IOException e) {
-            System.out.println("Error writing file: " + e.getMessage());
-            return;
+            fw.write(roll + "," + name + "," + marks + "\n");
+            System.out.println();
         }
 
-        // Reading and displaying all records
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-System.out.println("----- Student Records -----");
-            String line;
-            while ((line = br.readLine()) != null) {
-                System.out.println(line);
-            }
+        fw.close();
 
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
-            return;
+        System.out.println("Student records saved successfully.\n");
+
+        System.out.println("----- Student Records -----");
+        BufferedReader br = new BufferedReader(new FileReader("student.txt"));
+
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+        br.close();
+
+        System.out.print("\nEnter Roll Number to Search: ");
+        int search = sc.nextInt();
+
+        br = new BufferedReader(new FileReader("student.txt"));
+        boolean found = false;
+
+        while ((line = br.readLine()) != null) {
+            String[] data = line.split(",");
+
+            if (Integer.parseInt(data[0]) == search) {
+                found = true;
+                System.out.println("\nStudent Found");
+                System.out.println("Roll No : " + data[0]);
+                System.out.println("Name    : " + data[1]);
+                System.out.println("Marks   : " + data[2]);
+                break;
+            }
         }
 
-        // Searching for a student
-        System.out.print("\nEnter Roll Number to Search : ");
-        String searchRoll = sc.nextLine();
-
-        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
-
-            boolean found = false;
-            String line;
-            while ((line = br.readLine()) != null) {
-                String[] data = line.split(",");
-                if (data[0].equals(searchRoll)) {
-                    found = true;
-                    System.out.println("\nStudent Found");
-                    System.out.println("\nRoll No : " + data[0]);
-                    System.out.println("Name  : " + data[1]);
-                    System.out.println("Marks : " + data[2]);
-                    break;
-                }
-            }
-
-            if (!found) {
-                System.out.println("\nStudent with Roll No " + searchRoll + " not found.");
-            }
-
-        } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+        if (!found) {
+            System.out.println("Student Not Found");
         }
 
+        br.close();
         sc.close();
     }
 }
